@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1600, initial-scale=1" />
+  <title>Pulse Seat - Admin Ops And Scanner</title>
+  <style>
+:root {
+  --blue-950: #07111f;
+  --blue-900: #0b1b33;
+  --blue-800: #0f2f5f;
+  --blue-700: #174ea6;
+  --blue-600: #2563eb;
+  --blue-500: #3b82f6;
+  --blue-400: #60a5fa;
+  --cyan-500: #06b6d4;
+  --green-500: #16a34a;
+  --amber-500: #f59e0b;
+  --rose-500: #f43f5e;
+  --violet-500: #7c3aed;
+  --ink: #0f172a;
+  --ink-2: #1e293b;
+  --muted: #64748b;
+  --muted-2: #94a3b8;
+  --line: #dbe4f0;
+  --line-2: #cbd5e1;
+  --paper: #f6f8fb;
+  --paper-2: #eef4ff;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --dark: #060b14;
+  --dark-2: #0b1220;
+  --dark-3: #111827;
+  --dark-4: #172033;
+  --dark-line: #25334a;
+  --shadow: 0 26px 80px rgba(15, 23, 42, 0.16);
+  --shadow-soft: 0 16px 44px rgba(30, 64, 175, 0.12);
+  --shadow-dark: 0 28px 90px rgba(0, 0, 0, 0.42);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 1600px; min-height: 1000px; }
+body {
+  background: #050812;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--ink);
+}
+.screen {
+  width: 1600px;
+  height: 1000px;
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0) 34%),
+    radial-gradient(circle at 84% 10%, rgba(96,165,250,0.2), transparent 24%),
+    linear-gradient(180deg, #f8fbff 0%, #edf4ff 100%);
+}
+.screen.dark {
+  color: #eef5ff;
+  background:
+    radial-gradient(circle at 82% 12%, rgba(37,99,235,0.32), transparent 26%),
+    radial-gradient(circle at 14% 86%, rgba(6,182,212,0.16), transparent 24%),
+    linear-gradient(180deg, #06101f 0%, #0b1220 100%);
+}
+.screen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-size: 40px 40px;
+  background-image: linear-gradient(rgba(148,163,184,0.18) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.18) 1px, transparent 1px);
+}
+.screen.dark::before {
+  background-image: linear-gradient(rgba(96,165,250,0.11) 1px, transparent 1px), linear-gradient(90deg, rgba(96,165,250,0.11) 1px, transparent 1px);
+}
+.title-bar {
+  position: absolute;
+  left: 58px;
+  right: 58px;
+  top: 36px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--ink);
+}
+.dark .title-bar { color: #eaf2ff; }
+.canvas-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid rgba(37,99,235,0.16);
+  background: rgba(255,255,255,0.7);
+  color: #1d4ed8;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 800;
+}
+.dark .canvas-note {
+  color: #bfdbfe;
+  background: rgba(15,23,42,0.7);
+  border-color: rgba(96,165,250,0.22);
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 860;
+  color: var(--ink);
+}
+.dark .brand, .brand.dark { color: #eff6ff; }
+.brand-mark {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  filter: drop-shadow(0 12px 20px rgba(37,99,235,0.25));
+}
+.brand strong { font-size: 19px; letter-spacing: 0; }
+.icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+.browser {
+  position: absolute;
+  z-index: 2;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid rgba(15,23,42,0.1);
+  box-shadow: var(--shadow);
+}
+.browser.dark {
+  background: var(--dark-2);
+  border-color: var(--dark-line);
+  box-shadow: var(--shadow-dark);
+}
+.browser-bar {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 18px;
+  border-bottom: 1px solid rgba(15,23,42,0.08);
+  background: rgba(248,250,252,0.82);
+}
+.browser.dark .browser-bar {
+  background: #09111f;
+  border-bottom-color: var(--dark-line);
+}
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot.red { background: #fb7185; }
+.dot.yellow { background: #fbbf24; }
+.dot.green { background: #34d399; }
+.browser-content { height: calc(100% - 44px); position: relative; }
+.phone {
+  position: absolute;
+  z-index: 4;
+  border-radius: 34px;
+  background: #050812;
+  padding: 10px;
+  box-shadow: var(--shadow-dark);
+  border: 1px solid rgba(255,255,255,0.09);
+}
+.phone-screen {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  border-radius: 26px;
+  background: #0b1220;
+  color: #eef5ff;
+  border: 1px solid #24334a;
+}
+.phone.light .phone-screen {
+  background: #f8fbff;
+  color: var(--ink);
+  border-color: #dbe4f0;
+}
+.notch {
+  position: absolute;
+  z-index: 6;
+  top: 18px;
+  left: 50%;
+  width: 86px;
+  height: 6px;
+  margin-left: -43px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.16);
+}
+.phone.light .notch { background: rgba(15,23,42,0.12); }
+.h1 { font-size: 70px; line-height: 0.94; letter-spacing: 0; font-weight: 900; }
+.h2 { font-size: 42px; line-height: 1.05; letter-spacing: 0; font-weight: 870; }
+.h3 { font-size: 26px; line-height: 1.14; letter-spacing: 0; font-weight: 840; }
+.body { font-size: 16px; line-height: 1.5; color: var(--muted); font-weight: 520; }
+.small { font-size: 13px; line-height: 1.42; color: var(--muted); font-weight: 560; }
+.tiny { font-size: 11px; line-height: 1.35; font-weight: 780; text-transform: uppercase; color: var(--muted); letter-spacing: 0; }
+.dark .body, .browser.dark .body { color: #9fb2cf; }
+.dark .small, .browser.dark .small { color: #9fb2cf; }
+.dark .tiny, .browser.dark .tiny { color: #8ea3c4; }
+.dark .h1,
+.dark .h2,
+.dark .h3,
+.browser.dark .h1,
+.browser.dark .h2,
+.browser.dark .h3,
+.dark-card .h1,
+.dark-card .h2,
+.dark-card .h3 {
+  color: #eef5ff;
+}
+.card {
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 14px 36px rgba(15,23,42,0.07);
+}
+.card.flat { box-shadow: none; }
+.dark-card {
+  border-radius: 8px;
+  border: 1px solid var(--dark-line);
+  background: linear-gradient(180deg, rgba(23,32,51,0.98), rgba(15,23,42,0.98));
+  color: #eef5ff;
+  box-shadow: 0 22px 60px rgba(0,0,0,0.25);
+}
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 14px;
+  font-weight: 820;
+  white-space: nowrap;
+}
+.button svg, .searchbar svg, .toolbar-button svg { width: 18px; height: 18px; flex: 0 0 auto; }
+.button.primary { background: var(--blue-600); color: white; box-shadow: 0 16px 30px rgba(37,99,235,0.24); }
+.button.secondary { background: #e8f1ff; color: #1d4ed8; border-color: #bfd5ff; }
+.button.dark { background: #0f172a; color: #f8fbff; border-color: #1e293b; }
+.button.light { background: #fff; color: var(--ink); border-color: var(--line); }
+.button.ghost { background: rgba(255,255,255,0.08); color: #eef5ff; border-color: rgba(255,255,255,0.16); }
+.button.green { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 12px;
+  line-height: 28px;
+  font-weight: 820;
+  white-space: nowrap;
+}
+.label.blue { background: #dbeafe; color: #1d4ed8; border-color: #bfdbfe; }
+.label.green { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
+.label.amber { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+.label.rose { background: #ffe4e6; color: #be123c; border-color: #fecdd3; }
+.label.violet { background: #ede9fe; color: #5b21b6; border-color: #ddd6fe; }
+.label.dark { background: #16243a; color: #dbeafe; border-color: #2d4264; }
+.searchbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 14px;
+  background: #fff;
+  color: #475569;
+  font-size: 14px;
+  font-weight: 650;
+}
+.dark .searchbar, .browser.dark .searchbar {
+  background: #101a2d;
+  border-color: #263752;
+  color: #cbd5e1;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 8px;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 780;
+}
+.nav-item.active { color: #1d4ed8; background: #e8f1ff; }
+.browser.dark .nav-item { color: #9fb2cf; }
+.browser.dark .nav-item.active { color: #dbeafe; background: #152440; border: 1px solid #2b4268; }
+.stat {
+  padding: 18px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: #fff;
+}
+.stat .value { font-size: 31px; line-height: 1; font-weight: 900; margin-top: 10px; }
+.stat .sub { margin-top: 9px; display: flex; align-items: center; gap: 8px; }
+.browser.dark .stat, .dark .stat {
+  background: #101a2d;
+  border-color: #263752;
+  color: #eef5ff;
+}
+.table { width: 100%; border-collapse: collapse; font-size: 13px; color: inherit; }
+.table th {
+  text-align: left;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0;
+  padding: 0 0 12px;
+}
+.table td {
+  padding: 10px 0;
+  border-top: 1px solid #e2e8f0;
+  font-weight: 700;
+  color: #334155;
+}
+.browser.dark .table th { color: #8ea3c4; }
+.browser.dark .table td { color: #dbe6f7; border-top-color: #263752; }
+.toolbar-button {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #93a4bd;
+  border: 1px solid transparent;
+}
+.toolbar-button.active {
+  color: #fff;
+  background: var(--blue-600);
+  box-shadow: 0 16px 30px rgba(37,99,235,0.28);
+}
+</style>
+</head>
+<body>
+  <main class="screen ">
+    <div class="title-bar">
+      <div class="brand">
+    <svg class="brand-mark" style="width:40px;height:40px" viewBox="0 0 48 48" fill="none">
+      <rect x="4" y="4" width="40" height="40" rx="12" fill="#2563eb"/>
+      <path d="M14 18.5c0-4.2 3.2-7.5 7.8-7.5h4.4c4.6 0 7.8 3.3 7.8 7.5v11" stroke="white" stroke-width="3.4" stroke-linecap="round"/>
+      <path d="M12 28h24M16 28v6M32 28v6M19 20h10" stroke="#dbeafe" stroke-width="3.2" stroke-linecap="round"/>
+      <circle cx="36" cy="14" r="4.5" fill="#06b6d4"/>
+    </svg>
+    <strong>Pulse Seat</strong>
+  </div>
+      <div class="canvas-note"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 9.5 9.5 3 12l6.5 2.5L12 21l2.5-6.5L21 12l-6.5-2.5L12 3Z"/></svg> Admin Ops And Scanner</div>
+    </div>
+    
+    <section class="browser " style="left:56px;top:76px;width:1102px;height:900px">
+    <div class="browser-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+    <div class="browser-content">
+        <div style="height:100%;display:grid;grid-template-columns:226px 1fr;background:#f8fbff">
+          <aside style="background:#fff;border-right:1px solid #e2e8f0;padding:34px 24px">
+            <div class="brand">
+    <svg class="brand-mark" style="width:36px;height:36px" viewBox="0 0 48 48" fill="none">
+      <rect x="4" y="4" width="40" height="40" rx="12" fill="#2563eb"/>
+      <path d="M14 18.5c0-4.2 3.2-7.5 7.8-7.5h4.4c4.6 0 7.8 3.3 7.8 7.5v11" stroke="white" stroke-width="3.4" stroke-linecap="round"/>
+      <path d="M12 28h24M16 28v6M32 28v6M19 20h10" stroke="#dbeafe" stroke-width="3.2" stroke-linecap="round"/>
+      <circle cx="36" cy="14" r="4.5" fill="#06b6d4"/>
+    </svg>
+    <strong>Pulse Seat</strong>
+  </div>
+            <nav style="display:grid;gap:8px;margin-top:42px"><div class="nav-item active"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-5"/></svg><span>Platform</span></div><div class="nav-item "><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9a3 3 0 0 0 0 6v3h18v-3a3 3 0 0 0 0-6V6H3v3Z"/><path d="M13 6v12"/></svg><span>Organizers</span></div><div class="nav-item "><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4"/><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg><span>Events</span></div><div class="nav-item "><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H5a2 2 0 0 1 0-4h12v4"/><path d="M3 5v14a2 2 0 0 0 2 2h15V7"/><path d="M16 14h4"/></svg><span>Payments</span></div><div class="nav-item "><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-9 12h8l-1 8 9-12h-8l1-8Z"/></svg><span>Risk rules</span></div><div class="nav-item "><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1A2 2 0 1 1 4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1A2 2 0 1 1 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.6V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1A2 2 0 1 1 19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.6 1h.1a2 2 0 1 1 0 4H21a1.7 1.7 0 0 0-1.6 1Z"/></svg><span>Audit log</span></div></nav>
+          </aside>
+          <main style="padding:34px 38px">
+            <div style="display:flex;align-items:end;justify-content:space-between"><div><div class="h2">Admin operations</div><p class="body">RBAC, audit, reconciliation, and incident visibility.</p></div><span class="button primary"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Create rule</span></div>
+            <section class="card flat" style="padding:20px;margin-top:28px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+              <div class="stat">
+    <div class="tiny">Checkout degraded</div>
+    <div class="value">No</div>
+    <div class="sub"><span class="label green">Healthy</span></div>
+  </div>
+              <div class="stat">
+    <div class="tiny">Outbox lag</div>
+    <div class="value">1.8s</div>
+    <div class="sub"><span class="label blue">Normal</span></div>
+  </div>
+              <div class="stat">
+    <div class="tiny">Refund queue</div>
+    <div class="value">12</div>
+    <div class="sub"><span class="label amber">Watch</span></div>
+  </div>
+              <div class="stat">
+    <div class="tiny">Risk blocks</div>
+    <div class="value">48</div>
+    <div class="sub"><span class="label rose">Spike</span></div>
+  </div>
+            </section>
+            <section class="card flat" style="padding:24px;margin-top:22px">
+              <div class="h3">Events requiring attention</div>
+              <table class="table" style="margin-top:20px">
+                <thead><tr><th>ID</th><th>Event</th><th>Signal</th><th style="text-align:right">Action</th></tr></thead>
+                <tbody>
+                  <tr><td>evt_123</td><td>Vu Live Concert</td><td><span class="label amber">High contention</span></td><td style="text-align:right">Rate limit normal</td></tr>
+                  <tr><td>evt_204</td><td>Neon Summer Fest</td><td><span class="label rose">PSP spike</span></td><td style="text-align:right">Reconcile</td></tr>
+                  <tr><td>evt_310</td><td>Acoustic Rooftop</td><td><span class="label blue">Media sync</span></td><td style="text-align:right">Retry queued</td></tr>
+                  <tr><td>evt_418</td><td>Indie Market</td><td><span class="label rose">Duplicate scans</span></td><td style="text-align:right">Watch Gate B</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section class="dark-card" style="padding:22px;margin-top:22px">
+              <div class="h3">Audit stream</div>
+              <div class="small" style="margin-top:14px">price_tier.updated -> seat_map.v4.published -> ticket.voided -> payout.changed</div>
+            </section>
+          </main>
+        </div></div>
+  </section>
+    <section class="phone " style="left:1248px;top:116px;width:294px;height:712px">
+    <div class="notch"></div>
+    <div class="phone-screen">
+        <div style="padding:58px 24px 24px">
+          <div style="font-size:28px;font-weight:900">Gate scanner</div>
+          <div style="width:196px;margin:30px auto 0"><div style="display:grid;grid-template-columns:repeat(9,1fr);gap:4px;padding:14px;border-radius:8px;background:#fff">
+    <span style="aspect-ratio:1;border-radius:2px;background:#fff"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#fff"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#fff"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#fff"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#fff"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#fff"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#fff"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#fff"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#fff"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#fff"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#fff"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#fff"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#fff"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#fff"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#fff"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#fff"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span><span style="aspect-ratio:1;border-radius:2px;background:#0f172a"></span>
+  </div></div>
+          <div style="margin-top:24px;border-radius:8px;background:#083d2c;border:1px solid #0f7a55;padding:16px">
+            <div style="font-size:13px;font-weight:900;color:#86efac">ACCEPTED</div>
+            <div style="font-weight:800;margin-top:7px">A / Row 10 / Seat 15</div>
+          </div>
+          <div style="margin-top:12px;border-radius:8px;background:#4a1520;border:1px solid #7f1d1d;padding:16px">
+            <div style="font-size:13px;font-weight:900;color:#fecdd3">DUPLICATE</div>
+            <div class="small" style="color:#fecdd3;margin-top:7px">First scan 18:10 - Gate A</div>
+          </div>
+          <div style="position:absolute;left:24px;right:24px;bottom:28px"><span class="button primary"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Manual lookup</span></div>
+        </div></div>
+  </section>
+  
+  </main>
+</body>
+</html>

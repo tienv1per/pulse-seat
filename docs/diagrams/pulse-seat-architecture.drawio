@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="drawio" version="26.0.0">
+  <diagram name="Pulse Seat Architecture">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1150" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="Clients" style="swimlane;startSize=30;rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="260" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="3" value="Fan Web / Mobile" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="2">
+          <mxGeometry x="40" y="60" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="4" value="Organizer Dashboard" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="2">
+          <mxGeometry x="40" y="130" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="6" value="Edge" style="swimlane;startSize=30;rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="80" width="300" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="7" value="CDN / Rate Limit" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="6">
+          <mxGeometry x="50" y="60" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="9" value="API Gateway&#xa;Auth + Validation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="6">
+          <mxGeometry x="50" y="215" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="10" value="Application Runtime" style="swimlane;startSize=30;rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="720" y="40" width="600" height="470" as="geometry" />
+        </mxCell>
+        <mxCell id="11" value="Search Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="10">
+          <mxGeometry x="40" y="60" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="12" value="Booking Service&#xa;event + reservation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="10">
+          <mxGeometry x="220" y="60" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="13" value="Ticket Service&#xa;QR + check-in" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="10">
+          <mxGeometry x="380" y="60" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="14" value="Payment Service&#xa;PSP adapter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="10">
+          <mxGeometry x="40" y="150" width="210" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="15" value="Notification Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="10">
+          <mxGeometry x="280" y="150" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="16" value="Reservation Expiry&#xa;Worker" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="10">
+          <mxGeometry x="40" y="260" width="190" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="17" value="CDC / Sync Job&#xa;ES + cache" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="10">
+          <mxGeometry x="260" y="270" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="18" value="API Contracts&#xa;REST / gRPC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="10">
+          <mxGeometry x="440" y="270" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="19" value="Transactional Outbox" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="10">
+          <mxGeometry x="200" y="370" width="190" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="20" value="Data And Async" style="swimlane;startSize=30;rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="720" y="580" width="600" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="21" value="PostgreSQL&#xa;source of truth" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="20">
+          <mxGeometry x="40" y="65" width="160" height="85" as="geometry" />
+        </mxCell>
+        <mxCell id="22" value="Redis&#xa;cache, rate limit, TTL hints" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="20">
+          <mxGeometry x="230" y="65" width="170" height="85" as="geometry" />
+        </mxCell>
+        <mxCell id="23" value="Elasticsearch&#xa;event discovery" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="20">
+          <mxGeometry x="430" y="65" width="140" height="85" as="geometry" />
+        </mxCell>
+        <mxCell id="24" value="Event Bus" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="20">
+          <mxGeometry x="210" y="200" width="170" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="25" value="Workers&#xa;Reservation Expiry, CDC/Sync" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="20">
+          <mxGeometry x="410" y="200" width="160" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="26" value="External Systems" style="swimlane;startSize=30;rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1380" y="120" width="300" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="27" value="PSP&#xa;Stripe / PayOS / MoMo" style="rounded=1;dashed=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="26">
+          <mxGeometry x="55" y="65" width="190" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="28" value="Email / SMS Provider" style="rounded=1;dashed=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="26">
+          <mxGeometry x="55" y="150" width="190" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="29" value="MinIO + CDN" style="rounded=1;dashed=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="26">
+          <mxGeometry x="55" y="230" width="190" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="30" value="HTTP" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="2" target="6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="31" value="HTTP requests" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="9" target="10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="32" value="ACID writes" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;entryX=0.2;entryY=0;" edge="1" parent="1" source="10" target="21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="33" value="cache" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.55;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="10" target="22">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="34" value="read queries" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="10" target="23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="35" value="publish" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="19" target="24">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="36" value="consume" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="24" target="25">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="37" value="charge/refund" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.35;entryX=0;entryY=0.35;" edge="1" parent="1" source="14" target="27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="38" value="notify" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="15" target="28">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="39" value="media" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.2;entryX=0;entryY=0.8;" edge="1" parent="1" source="12" target="29">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="40" value="cache invalidation" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" edge="1" parent="1" source="25" target="23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

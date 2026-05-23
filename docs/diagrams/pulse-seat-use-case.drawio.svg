@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Pulse Seat use case diagram</title>
+  <desc id="desc">Draw.io style use case diagram showing fan, organizer, staff and platform admin interactions with Pulse Seat.</desc>
+  <defs>
+    <style>
+      .bg{fill:#fff}.box{fill:#f8fbff;stroke:#6c8ebf;stroke-width:2}.actor{stroke:#1f2937;stroke-width:2;fill:none}.label{font-family:Inter,Arial,sans-serif;fill:#1f2937}.title{font-size:26px;font-weight:700;fill:#1e40af}.small{font-size:15px}.uc{stroke-width:2}.fan{fill:#dae8fc;stroke:#6c8ebf}.org{fill:#e1d5e7;stroke:#9673a6}.success{fill:#d5e8d4;stroke:#82b366}.warn{fill:#fff2cc;stroke:#d6b656}.danger{fill:#f8cecc;stroke:#b85450}.neutral{fill:#f5f5f5;stroke:#666}.line{stroke:#64748b;stroke-width:1.4;fill:none;opacity:.42}
+    </style>
+  </defs>
+  <rect class="bg" width="1600" height="900"/>
+  <text class="label title" x="56" y="48">Pulse Seat - Use Case Diagram</text>
+  <text class="label small" x="56" y="76" fill="#64748b">Core MVP interactions for fan purchase, organizer operations, staff scanning and platform administration.</text>
+
+  <rect class="box" x="210" y="100" width="1130" height="690" rx="16"/>
+  <text class="label" x="245" y="136" font-size="22" font-weight="700">Pulse Seat</text>
+
+  <g transform="translate(90 185)">
+    <circle class="actor" cx="0" cy="0" r="18"/><path class="actor" d="M0 18v58M-36 44h72M0 76l-32 48M0 76l32 48"/>
+    <text class="label" x="-28" y="150" font-size="18" font-weight="700">Fan</text>
+  </g>
+  <g transform="translate(90 460)">
+    <circle class="actor" cx="0" cy="0" r="18"/><path class="actor" d="M0 18v58M-36 44h72M0 76l-32 48M0 76l32 48"/>
+    <text class="label" x="-45" y="150" font-size="18" font-weight="700">Organizer</text>
+  </g>
+  <g transform="translate(1450 205)">
+    <circle class="actor" cx="0" cy="0" r="18"/><path class="actor" d="M0 18v58M-36 44h72M0 76l-32 48M0 76l32 48"/>
+    <text class="label" x="-22" y="150" font-size="18" font-weight="700">Staff</text>
+  </g>
+  <g transform="translate(1450 555)">
+    <circle class="actor" cx="0" cy="0" r="18"/><path class="actor" d="M0 18v58M-36 44h72M0 76l-32 48M0 76l32 48"/>
+    <text class="label" x="-58" y="150" font-size="18" font-weight="700">Platform Admin</text>
+  </g>
+
+  <ellipse class="uc fan" cx="390" cy="190" rx="100" ry="38"/><text class="label" x="339" y="196" font-size="17">Search shows</text>
+  <ellipse class="uc fan" cx="650" cy="190" rx="120" ry="44"/><text class="label" x="589" y="185" font-size="17">View detail</text><text class="label" x="583" y="207" font-size="17">and seat map</text>
+  <ellipse class="uc warn" cx="930" cy="190" rx="105" ry="38"/><text class="label" x="858" y="196" font-size="17">Select tickets / seats</text>
+  <ellipse class="uc success" cx="1160" cy="190" rx="105" ry="38"/><text class="label" x="1087" y="196" font-size="17">Create TTL reservation</text>
+  <ellipse class="uc success" cx="500" cy="330" rx="105" ry="38"/><text class="label" x="435" y="336" font-size="17">Checkout and pay</text>
+  <ellipse class="uc success" cx="760" cy="330" rx="105" ry="38"/><text class="label" x="693" y="336" font-size="17">Receive QR ticket</text>
+  <ellipse class="uc fan" cx="1020" cy="330" rx="110" ry="38"/><text class="label" x="947" y="336" font-size="17">Manage my tickets</text>
+
+  <ellipse class="uc org" cx="420" cy="500" rx="128" ry="42"/><text class="label" x="335" y="506" font-size="17">Create event / show</text>
+  <ellipse class="uc org" cx="705" cy="500" rx="138" ry="48"/><text class="label" x="625" y="495" font-size="17">Configure tiers</text><text class="label" x="620" y="517" font-size="17">and access codes</text>
+  <ellipse class="uc org" cx="1010" cy="500" rx="136" ry="48"/><text class="label" x="930" y="495" font-size="17">Manage seat map</text><text class="label" x="932" y="517" font-size="17">holds and blocks</text>
+  <ellipse class="uc org" cx="705" cy="650" rx="120" ry="42"/><text class="label" x="628" y="656" font-size="17">Sales dashboard</text>
+  <ellipse class="uc success" cx="1155" cy="530" rx="105" ry="38"/><text class="label" x="1097" y="536" font-size="17">Scan QR at gate</text>
+  <ellipse class="uc danger" cx="1155" cy="655" rx="118" ry="42"/><text class="label" x="1079" y="661" font-size="17">Duplicate / void</text>
+  <ellipse class="uc neutral" cx="420" cy="660" rx="128" ry="42"/><text class="label" x="331" y="666" font-size="17">Platform settings</text>
+
+  <path class="line" d="M126 235C210 220 260 200 292 193"/><path class="line" d="M126 235C290 210 435 195 530 192"/><path class="line" d="M126 235C395 218 690 199 825 192"/><path class="line" d="M126 235C510 225 900 205 1055 192"/><path class="line" d="M126 235C270 280 350 310 397 326"/><path class="line" d="M126 235C370 285 560 316 655 328"/><path class="line" d="M126 235C500 300 800 322 910 330"/>
+  <path class="line" d="M126 510C215 506 260 503 292 501"/><path class="line" d="M126 510C300 505 455 501 567 500"/><path class="line" d="M126 510C430 518 735 510 875 503"/><path class="line" d="M126 510C305 585 490 630 588 646"/>
+  <path class="line" d="M1414 260C1325 330 1245 460 1216 503"/><path class="line" d="M1414 260C1300 420 1245 580 1238 638"/><path class="line" d="M1414 610C1080 672 685 675 548 665"/>
+</svg>

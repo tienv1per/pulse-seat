@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1600, initial-scale=1" />
+  <title>Pulse Seat - Fan Landing</title>
+  <style>
+:root {
+  --blue-950: #07111f;
+  --blue-900: #0b1b33;
+  --blue-800: #0f2f5f;
+  --blue-700: #174ea6;
+  --blue-600: #2563eb;
+  --blue-500: #3b82f6;
+  --blue-400: #60a5fa;
+  --cyan-500: #06b6d4;
+  --green-500: #16a34a;
+  --amber-500: #f59e0b;
+  --rose-500: #f43f5e;
+  --violet-500: #7c3aed;
+  --ink: #0f172a;
+  --ink-2: #1e293b;
+  --muted: #64748b;
+  --muted-2: #94a3b8;
+  --line: #dbe4f0;
+  --line-2: #cbd5e1;
+  --paper: #f6f8fb;
+  --paper-2: #eef4ff;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --dark: #060b14;
+  --dark-2: #0b1220;
+  --dark-3: #111827;
+  --dark-4: #172033;
+  --dark-line: #25334a;
+  --shadow: 0 26px 80px rgba(15, 23, 42, 0.16);
+  --shadow-soft: 0 16px 44px rgba(30, 64, 175, 0.12);
+  --shadow-dark: 0 28px 90px rgba(0, 0, 0, 0.42);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 1600px; min-height: 1000px; }
+body {
+  background: #050812;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--ink);
+}
+.screen {
+  width: 1600px;
+  height: 1000px;
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0) 34%),
+    radial-gradient(circle at 84% 10%, rgba(96,165,250,0.2), transparent 24%),
+    linear-gradient(180deg, #f8fbff 0%, #edf4ff 100%);
+}
+.screen.dark {
+  color: #eef5ff;
+  background:
+    radial-gradient(circle at 82% 12%, rgba(37,99,235,0.32), transparent 26%),
+    radial-gradient(circle at 14% 86%, rgba(6,182,212,0.16), transparent 24%),
+    linear-gradient(180deg, #06101f 0%, #0b1220 100%);
+}
+.screen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-size: 40px 40px;
+  background-image: linear-gradient(rgba(148,163,184,0.18) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.18) 1px, transparent 1px);
+}
+.screen.dark::before {
+  background-image: linear-gradient(rgba(96,165,250,0.11) 1px, transparent 1px), linear-gradient(90deg, rgba(96,165,250,0.11) 1px, transparent 1px);
+}
+.title-bar {
+  position: absolute;
+  left: 58px;
+  right: 58px;
+  top: 36px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--ink);
+}
+.dark .title-bar { color: #eaf2ff; }
+.canvas-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid rgba(37,99,235,0.16);
+  background: rgba(255,255,255,0.7);
+  color: #1d4ed8;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 800;
+}
+.dark .canvas-note {
+  color: #bfdbfe;
+  background: rgba(15,23,42,0.7);
+  border-color: rgba(96,165,250,0.22);
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 860;
+  color: var(--ink);
+}
+.dark .brand, .brand.dark { color: #eff6ff; }
+.brand-mark {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  filter: drop-shadow(0 12px 20px rgba(37,99,235,0.25));
+}
+.brand strong { font-size: 19px; letter-spacing: 0; }
+.icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+.browser {
+  position: absolute;
+  z-index: 2;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid rgba(15,23,42,0.1);
+  box-shadow: var(--shadow);
+}
+.browser.dark {
+  background: var(--dark-2);
+  border-color: var(--dark-line);
+  box-shadow: var(--shadow-dark);
+}
+.browser-bar {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 18px;
+  border-bottom: 1px solid rgba(15,23,42,0.08);
+  background: rgba(248,250,252,0.82);
+}
+.browser.dark .browser-bar {
+  background: #09111f;
+  border-bottom-color: var(--dark-line);
+}
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot.red { background: #fb7185; }
+.dot.yellow { background: #fbbf24; }
+.dot.green { background: #34d399; }
+.browser-content { height: calc(100% - 44px); position: relative; }
+.phone {
+  position: absolute;
+  z-index: 4;
+  border-radius: 34px;
+  background: #050812;
+  padding: 10px;
+  box-shadow: var(--shadow-dark);
+  border: 1px solid rgba(255,255,255,0.09);
+}
+.phone-screen {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  border-radius: 26px;
+  background: #0b1220;
+  color: #eef5ff;
+  border: 1px solid #24334a;
+}
+.phone.light .phone-screen {
+  background: #f8fbff;
+  color: var(--ink);
+  border-color: #dbe4f0;
+}
+.notch {
+  position: absolute;
+  z-index: 6;
+  top: 18px;
+  left: 50%;
+  width: 86px;
+  height: 6px;
+  margin-left: -43px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.16);
+}
+.phone.light .notch { background: rgba(15,23,42,0.12); }
+.h1 { font-size: 70px; line-height: 0.94; letter-spacing: 0; font-weight: 900; }
+.h2 { font-size: 42px; line-height: 1.05; letter-spacing: 0; font-weight: 870; }
+.h3 { font-size: 26px; line-height: 1.14; letter-spacing: 0; font-weight: 840; }
+.body { font-size: 16px; line-height: 1.5; color: var(--muted); font-weight: 520; }
+.small { font-size: 13px; line-height: 1.42; color: var(--muted); font-weight: 560; }
+.tiny { font-size: 11px; line-height: 1.35; font-weight: 780; text-transform: uppercase; color: var(--muted); letter-spacing: 0; }
+.dark .body, .browser.dark .body { color: #9fb2cf; }
+.dark .small, .browser.dark .small { color: #9fb2cf; }
+.dark .tiny, .browser.dark .tiny { color: #8ea3c4; }
+.dark .h1,
+.dark .h2,
+.dark .h3,
+.browser.dark .h1,
+.browser.dark .h2,
+.browser.dark .h3,
+.dark-card .h1,
+.dark-card .h2,
+.dark-card .h3 {
+  color: #eef5ff;
+}
+.card {
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 14px 36px rgba(15,23,42,0.07);
+}
+.card.flat { box-shadow: none; }
+.dark-card {
+  border-radius: 8px;
+  border: 1px solid var(--dark-line);
+  background: linear-gradient(180deg, rgba(23,32,51,0.98), rgba(15,23,42,0.98));
+  color: #eef5ff;
+  box-shadow: 0 22px 60px rgba(0,0,0,0.25);
+}
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 14px;
+  font-weight: 820;
+  white-space: nowrap;
+}
+.button svg, .searchbar svg, .toolbar-button svg { width: 18px; height: 18px; flex: 0 0 auto; }
+.button.primary { background: var(--blue-600); color: white; box-shadow: 0 16px 30px rgba(37,99,235,0.24); }
+.button.secondary { background: #e8f1ff; color: #1d4ed8; border-color: #bfd5ff; }
+.button.dark { background: #0f172a; color: #f8fbff; border-color: #1e293b; }
+.button.light { background: #fff; color: var(--ink); border-color: var(--line); }
+.button.ghost { background: rgba(255,255,255,0.08); color: #eef5ff; border-color: rgba(255,255,255,0.16); }
+.button.green { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 12px;
+  line-height: 28px;
+  font-weight: 820;
+  white-space: nowrap;
+}
+.label.blue { background: #dbeafe; color: #1d4ed8; border-color: #bfdbfe; }
+.label.green { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
+.label.amber { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+.label.rose { background: #ffe4e6; color: #be123c; border-color: #fecdd3; }
+.label.violet { background: #ede9fe; color: #5b21b6; border-color: #ddd6fe; }
+.label.dark { background: #16243a; color: #dbeafe; border-color: #2d4264; }
+.searchbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 14px;
+  background: #fff;
+  color: #475569;
+  font-size: 14px;
+  font-weight: 650;
+}
+.dark .searchbar, .browser.dark .searchbar {
+  background: #101a2d;
+  border-color: #263752;
+  color: #cbd5e1;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 8px;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 780;
+}
+.nav-item.active { color: #1d4ed8; background: #e8f1ff; }
+.browser.dark .nav-item { color: #9fb2cf; }
+.browser.dark .nav-item.active { color: #dbeafe; background: #152440; border: 1px solid #2b4268; }
+.stat {
+  padding: 18px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: #fff;
+}
+.stat .value { font-size: 31px; line-height: 1; font-weight: 900; margin-top: 10px; }
+.stat .sub { margin-top: 9px; display: flex; align-items: center; gap: 8px; }
+.browser.dark .stat, .dark .stat {
+  background: #101a2d;
+  border-color: #263752;
+  color: #eef5ff;
+}
+.table { width: 100%; border-collapse: collapse; font-size: 13px; color: inherit; }
+.table th {
+  text-align: left;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0;
+  padding: 0 0 12px;
+}
+.table td {
+  padding: 10px 0;
+  border-top: 1px solid #e2e8f0;
+  font-weight: 700;
+  color: #334155;
+}
+.browser.dark .table th { color: #8ea3c4; }
+.browser.dark .table td { color: #dbe6f7; border-top-color: #263752; }
+.toolbar-button {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #93a4bd;
+  border: 1px solid transparent;
+}
+.toolbar-button.active {
+  color: #fff;
+  background: var(--blue-600);
+  box-shadow: 0 16px 30px rgba(37,99,235,0.28);
+}
+</style>
+</head>
+<body>
+  <main class="screen ">
+    <div class="title-bar">
+      <div class="brand">
+    <svg class="brand-mark" style="width:40px;height:40px" viewBox="0 0 48 48" fill="none">
+      <rect x="4" y="4" width="40" height="40" rx="12" fill="#2563eb"/>
+      <path d="M14 18.5c0-4.2 3.2-7.5 7.8-7.5h4.4c4.6 0 7.8 3.3 7.8 7.5v11" stroke="white" stroke-width="3.4" stroke-linecap="round"/>
+      <path d="M12 28h24M16 28v6M32 28v6M19 20h10" stroke="#dbeafe" stroke-width="3.2" stroke-linecap="round"/>
+      <circle cx="36" cy="14" r="4.5" fill="#06b6d4"/>
+    </svg>
+    <strong>Pulse Seat</strong>
+  </div>
+      <div class="canvas-note"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 9.5 9.5 3 12l6.5 2.5L12 21l2.5-6.5L21 12l-6.5-2.5L12 3Z"/></svg> Fan Landing</div>
+    </div>
+    
+    <section class="browser " style="left:54px;top:82px;width:1114px;height:880px">
+    <div class="browser-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+    <div class="browser-content">
+        <div style="height:100%;display:grid;grid-template-rows:auto 1fr;background:#f8fbff">
+          <header style="height:78px;display:flex;align-items:center;justify-content:space-between;padding:0 38px;border-bottom:1px solid #e2e8f0;background:rgba(255,255,255,.86)">
+            <div class="brand">
+    <svg class="brand-mark" style="width:38px;height:38px" viewBox="0 0 48 48" fill="none">
+      <rect x="4" y="4" width="40" height="40" rx="12" fill="#2563eb"/>
+      <path d="M14 18.5c0-4.2 3.2-7.5 7.8-7.5h4.4c4.6 0 7.8 3.3 7.8 7.5v11" stroke="white" stroke-width="3.4" stroke-linecap="round"/>
+      <path d="M12 28h24M16 28v6M32 28v6M19 20h10" stroke="#dbeafe" stroke-width="3.2" stroke-linecap="round"/>
+      <circle cx="36" cy="14" r="4.5" fill="#06b6d4"/>
+    </svg>
+    <strong>Pulse Seat</strong>
+  </div>
+            <nav style="display:flex;align-items:center;gap:28px;color:#475569;font-size:14px;font-weight:780">
+              <span>Events</span><span>Venues</span><span>For organizers</span><span>Help</span>
+            </nav>
+            <span class="button primary"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Create event</span>
+          </header>
+          <main style="padding:46px 44px 42px;display:grid;grid-template-columns:1.05fr .95fr;gap:36px">
+            <section>
+              <div class="h1">Find the seat before the beat drops.</div>
+              <p class="body" style="font-size:18px;max-width:560px;margin-top:22px">Search concerts, reserve seats with a live hold timer, pay securely, and scan QR tickets at the gate.</p>
+              <div style="height:82px;margin-top:34px;border-radius:8px;background:#fff;border:1px solid #dbe4f0;box-shadow:var(--shadow-soft);display:grid;grid-template-columns:1.2fr 1fr 1fr auto;gap:12px;align-items:center;padding:14px">
+                <div class="searchbar"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg> Artist, event, venue</div>
+                <div class="searchbar"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18 3 21V6l6-3 6 3 6-3v15l-6 3-6-3Z"/><path d="M9 3v15M15 6v15"/></svg> Ho Chi Minh</div>
+                <div class="searchbar"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4"/><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg> This weekend</div>
+                <span class="button primary"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>Search</span>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:32px">
+                <article class="card" style="overflow:hidden">
+    <div style="height:158px;border-radius:8px;overflow:hidden;position:relative;color:white;background:
+    radial-gradient(circle at 76% 24%, #06b6d4 0 8%, transparent 24%),
+    radial-gradient(circle at 20% 86%, #f43f5e 0 6%, transparent 24%),
+    linear-gradient(135deg, #1d4ed8, #06b6d4);">
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent,rgba(2,6,23,0.58));"></div>
+      <div style="position:absolute;left:16px;right:16px;bottom:16px">
+        <div style="font-size:11px;font-weight:850;text-transform:uppercase;opacity:.86">District 7</div>
+        <div style="font-size:24px;line-height:1.05;font-weight:900;margin-top:4px">Neon Summer Fest</div>
+      </div>
+      <div style="position:absolute;right:16px;top:16px;width:78px;height:78px;border:1px solid rgba(255,255,255,.36);border-radius:50%"></div>
+      <div style="position:absolute;right:44px;top:38px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.7)"></div>
+    </div>
+    <div style="padding:13px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+      <div style="min-width:0"><span class="label rose">Hot</span><div style="font-size:18px;line-height:1.08;font-weight:900;margin-top:9px">Neon Summer Fest</div></div>
+      <div class="small" style="font-weight:850;text-align:right">from 790K</div>
+    </div>
+  </article>
+                <article class="card" style="overflow:hidden">
+    <div style="height:158px;border-radius:8px;overflow:hidden;position:relative;color:white;background:
+    radial-gradient(circle at 76% 24%, #7c3aed 0 8%, transparent 24%),
+    radial-gradient(circle at 20% 86%, #06b6d4 0 6%, transparent 24%),
+    linear-gradient(135deg, #2563eb, #7c3aed);">
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent,rgba(2,6,23,0.58));"></div>
+      <div style="position:absolute;left:16px;right:16px;bottom:16px">
+        <div style="font-size:11px;font-weight:850;text-transform:uppercase;opacity:.86">Thu Duc</div>
+        <div style="font-size:24px;line-height:1.05;font-weight:900;margin-top:4px">Vu Live Concert</div>
+      </div>
+      <div style="position:absolute;right:16px;top:16px;width:78px;height:78px;border:1px solid rgba(255,255,255,.36);border-radius:50%"></div>
+      <div style="position:absolute;right:44px;top:38px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.7)"></div>
+    </div>
+    <div style="padding:13px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+      <div style="min-width:0"><span class="label blue">Reserved</span><div style="font-size:18px;line-height:1.08;font-weight:900;margin-top:9px">Vu Live Concert</div></div>
+      <div class="small" style="font-weight:850;text-align:right">from 1.2M</div>
+    </div>
+  </article>
+                <article class="card" style="overflow:hidden">
+    <div style="height:158px;border-radius:8px;overflow:hidden;position:relative;color:white;background:
+    radial-gradient(circle at 76% 24%, #06b6d4 0 8%, transparent 24%),
+    radial-gradient(circle at 20% 86%, #f59e0b 0 6%, transparent 24%),
+    linear-gradient(135deg, #0f766e, #06b6d4);">
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent,rgba(2,6,23,0.58));"></div>
+      <div style="position:absolute;left:16px;right:16px;bottom:16px">
+        <div style="font-size:11px;font-weight:850;text-transform:uppercase;opacity:.86">District 1</div>
+        <div style="font-size:24px;line-height:1.05;font-weight:900;margin-top:4px">Acoustic Rooftop</div>
+      </div>
+      <div style="position:absolute;right:16px;top:16px;width:78px;height:78px;border:1px solid rgba(255,255,255,.36);border-radius:50%"></div>
+      <div style="position:absolute;right:44px;top:38px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.7)"></div>
+    </div>
+    <div style="padding:13px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+      <div style="min-width:0"><span class="label amber">Few left</span><div style="font-size:18px;line-height:1.08;font-weight:900;margin-top:9px">Acoustic Rooftop</div></div>
+      <div class="small" style="font-weight:850;text-align:right">from 450K</div>
+    </div>
+  </article>
+              </div>
+            </section>
+            <section style="position:relative">
+              <div class="card" style="padding:24px;height:100%;background:linear-gradient(180deg,#fff,#f8fbff)">
+                <div style="display:flex;align-items:center;justify-content:space-between"><span class="label blue">Live availability</span><span class="small">Updated 8 sec ago</span></div>
+                <div style="height:300px;margin-top:24px"><div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px">
+    <div style="width:360px;height:44px;border-radius:50% 50% 10px 10px;background:#dbeafe;color:#1d4ed8;display:grid;place-items:center;font-size:12px;font-weight:900;text-transform:uppercase">Stage</div>
+    <div style="display:grid;grid-template-columns:repeat(15,18px);gap:8px"><span style="width:18px;height:18px;border-radius:6px;background:#cbd5e1;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#cbd5e1;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#cbd5e1;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#f59e0b;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#cbd5e1;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#f59e0b;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.18)"></span><span style="width:18px;height:18px;border-radius:6px;background:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.18)"></span><span style="width:18px;height:18px;border-radius:6px;background:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.18)"></span><span style="width:18px;height:18px;border-radius:6px;background:#cbd5e1;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#f59e0b;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.18)"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#f59e0b;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#cbd5e1;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#f59e0b;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#cbd5e1;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#f59e0b;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#cbd5e1;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#7dd3fc;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span><span style="width:18px;height:18px;border-radius:6px;background:#06b6d4;box-shadow:none"></span></div>
+  </div></div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px">
+                  <div class="stat">
+    <div class="tiny">Available</div>
+    <div class="value">1,284</div>
+    <div class="sub"><span class="label green">Open</span></div>
+  </div>
+                  <div class="stat">
+    <div class="tiny">Held now</div>
+    <div class="value">318</div>
+    <div class="sub"><span class="label amber">08m avg</span></div>
+  </div>
+                  <div class="stat">
+    <div class="tiny">Sold</div>
+    <div class="value">5,842</div>
+    <div class="sub"><span class="label blue">73%</span></div>
+  </div>
+                </div>
+              </div>
+            </section>
+          </main>
+        </div></div>
+  </section>
+    <section class="phone " style="left:1236px;top:134px;width:292px;height:700px">
+    <div class="notch"></div>
+    <div class="phone-screen">
+        <div style="padding:56px 22px 22px;background:linear-gradient(180deg,#0b1220,#0f172a);height:100%">
+          <div class="brand dark">
+    <svg class="brand-mark" style="width:32px;height:32px" viewBox="0 0 48 48" fill="none">
+      <rect x="4" y="4" width="40" height="40" rx="12" fill="#2563eb"/>
+      <path d="M14 18.5c0-4.2 3.2-7.5 7.8-7.5h4.4c4.6 0 7.8 3.3 7.8 7.5v11" stroke="white" stroke-width="3.4" stroke-linecap="round"/>
+      <path d="M12 28h24M16 28v6M32 28v6M19 20h10" stroke="#dbeafe" stroke-width="3.2" stroke-linecap="round"/>
+      <circle cx="36" cy="14" r="4.5" fill="#06b6d4"/>
+    </svg>
+    <strong>Pulse Seat</strong>
+  </div>
+          <div style="font-size:32px;line-height:1.02;font-weight:900;margin-top:30px">Tonight in HCM</div>
+          <div class="searchbar" style="margin-top:22px"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg> Search shows</div>
+          <div style="margin-top:20px"><div style="height:158px;border-radius:8px;overflow:hidden;position:relative;color:white;background:
+    radial-gradient(circle at 76% 24%, #06b6d4 0 8%, transparent 24%),
+    radial-gradient(circle at 20% 86%, #f43f5e 0 6%, transparent 24%),
+    linear-gradient(135deg, #2563eb, #06b6d4);">
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent,rgba(2,6,23,0.58));"></div>
+      <div style="position:absolute;left:16px;right:16px;bottom:16px">
+        <div style="font-size:11px;font-weight:850;text-transform:uppercase;opacity:.86">District 7</div>
+        <div style="font-size:24px;line-height:1.05;font-weight:900;margin-top:4px">Neon Summer Fest</div>
+      </div>
+      <div style="position:absolute;right:16px;top:16px;width:78px;height:78px;border:1px solid rgba(255,255,255,.36);border-radius:50%"></div>
+      <div style="position:absolute;right:44px;top:38px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.7)"></div>
+    </div></div>
+          <div style="display:grid;gap:10px;margin-top:18px">
+            <div class="dark-card" style="padding:14px;box-shadow:none"><strong>Vu Live Concert</strong><div class="small">Arena - from 1.2M</div></div>
+            <div class="dark-card" style="padding:14px;box-shadow:none"><strong>Indie Market Live</strong><div class="small">District 3 - from 390K</div></div>
+          </div>
+          <div style="position:absolute;left:22px;right:22px;bottom:24px"><span class="button primary"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>Explore events</span></div>
+        </div></div>
+  </section>
+  
+  </main>
+</body>
+</html>

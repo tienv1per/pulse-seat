@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="drawio" version="26.0.0">
+  <diagram name="Pulse Seat Use Case">
+    <mxGraphModel dx="1500" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="Fan" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="60" y="160" width="60" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="3" value="Organizer" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="60" y="420" width="60" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="4" value="Staff" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1410" y="170" width="60" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="5" value="Platform Admin" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="1410" y="520" width="60" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="6" value="Pulse Seat" style="swimlane;startSize=36;rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fbff;strokeColor=#6c8ebf;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="210" y="70" width="1130" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="7" value="Search shows" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="6">
+          <mxGeometry x="90" y="80" width="180" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="8" value="View show detail&#xa;and seat map" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="6">
+          <mxGeometry x="330" y="80" width="210" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="9" value="Select tickets / seats" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="6">
+          <mxGeometry x="610" y="80" width="190" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="10" value="Create TTL reservation" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="6">
+          <mxGeometry x="860" y="80" width="190" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="11" value="Checkout and pay" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="6">
+          <mxGeometry x="200" y="230" width="190" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="12" value="Receive QR ticket" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="6">
+          <mxGeometry x="480" y="230" width="190" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="13" value="Manage my tickets" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="6">
+          <mxGeometry x="760" y="230" width="190" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="14" value="Create event / performance" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="6">
+          <mxGeometry x="90" y="420" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="15" value="Configure ticket tiers&#xa;and access codes" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="6">
+          <mxGeometry x="370" y="410" width="230" height="82" as="geometry" />
+        </mxCell>
+        <mxCell id="16" value="Manage seat map&#xa;holds and blocks" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="6">
+          <mxGeometry x="660" y="410" width="230" height="82" as="geometry" />
+        </mxCell>
+        <mxCell id="17" value="View sales dashboard" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="6">
+          <mxGeometry x="410" y="560" width="210" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="18" value="Scan QR at gate" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="6">
+          <mxGeometry x="870" y="430" width="190" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="19" value="Handle duplicate / void" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="6">
+          <mxGeometry x="850" y="555" width="210" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="20" value="Manage platform settings" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="6">
+          <mxGeometry x="90" y="590" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="21" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="2" target="7"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="22" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="2" target="8"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="23" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="2" target="9"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="24" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="2" target="10"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="25" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="2" target="11"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="26" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="2" target="12"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="27" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="2" target="13"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="28" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="3" target="14"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="29" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="3" target="15"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="30" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="3" target="16"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="31" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="3" target="17"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="32" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="4" target="18"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="33" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="4" target="19"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="34" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="5" target="20"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
