@@ -143,7 +143,7 @@ pulse-seat/
 
 | Phase | Title | Primary Output | Estimate | Dependencies |
 |---|---|---|---:|---|
-| 0 | Foundation, Contracts, Repo Setup | Monorepo, CI, contracts, local infra, Neon plan | 5 days | None |
+| 0 | Foundation, Contracts, Repo Setup | Monorepo, contracts, local infra, Neon plan | 5 days | None |
 | 1 | Next.js FE Shell And Design System | App shell, route groups, auth layout, UI primitives | 6 days | Phase 0 |
 | 2 | Backend Service Skeleton And Gateway | Go services, REST gateway, health, telemetry | 7 days | Phase 0 |
 | 3 | Neon Data Layer And Migrations | Schemas, migrations, seed, repository transaction helpers | 8 days | Phase 0, 2 |
@@ -167,7 +167,7 @@ Critical path: Phase 0 -> Phase 3 -> Phase 5 -> Phase 6 -> Phase 8. FE Phase 1 c
 | P0-04 | Define event envelope and core event schemas | BE | JSON schema or proto/json definitions for reservation/payment/booking/ticket/notification events. | microservices-architect |
 | P0-05 | Configure local infra compose | BE | Redis, Elasticsearch/OpenSearch, MinIO and Redpanda/Kafka-compatible broker available locally. Postgres local is optional fallback. Logging and monitoring stack deferred to a later phase. | solution-architect |
 | P0-06 | Configure Neon projects/branches plan | BE | Dev/staging/prod connection env vars documented; pooled/direct URLs separated. | database-optimizer |
-| P0-07 | CI skeleton | Both | Lint/test/build jobs exist for Go services and Next.js app. | solution-architect |
+| P0-07 | Defer CI workflow | Both | No GitHub Actions workflow is enabled in Phase 0; local lint/test/build commands are documented. CI will be added in a later phase once service and web app structure stabilizes. | solution-architect |
 
 Quality gate:
 
@@ -178,7 +178,7 @@ Quality gate:
 Backend unit test gate:
 
 - Add unit tests for backend contract validation, config loading and shared envelope parsing before closing Phase 0.
-- `go test ./...` passes in CI for all backend packages created in this phase.
+- `go test ./...` passes locally for all backend packages created in this phase.
 - New backend packages target at least 80% statement coverage; any exception must be documented in the phase notes.
 
 ## 7. Phase 1: Next.js FE Shell And Design System
