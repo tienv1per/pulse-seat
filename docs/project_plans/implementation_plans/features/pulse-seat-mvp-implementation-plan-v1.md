@@ -122,7 +122,6 @@ pulse-seat/
     go-shared/
       config/
       logger/
-      otel/
       postgres/
       outbox/
       errors/
@@ -166,7 +165,7 @@ Critical path: Phase 0 -> Phase 3 -> Phase 5 -> Phase 6 -> Phase 8. FE Phase 1 c
 | P0-02 | Define OpenAPI public REST contract v1 | BE | Search, detail, seat-map, reservations, bookings, tickets, check-in endpoints stubbed. | api-design |
 | P0-03 | Define Protobuf contract for `PaymentIntentService.CreateIntent` | BE | Request/response includes idempotency, booking/reservation refs, amount, currency, buyer ref, status, client action. | microservices-architect, golang-pro |
 | P0-04 | Define event envelope and core event schemas | BE | JSON schema or proto/json definitions for reservation/payment/booking/ticket/notification events. | microservices-architect |
-| P0-05 | Configure local infra compose | BE | Redis, Elasticsearch/OpenSearch, MinIO, Redpanda/Kafka-compatible broker available locally. Postgres local is optional fallback. | monitoring-expert |
+| P0-05 | Configure local infra compose | BE | Redis, Elasticsearch/OpenSearch, MinIO and Redpanda/Kafka-compatible broker available locally. Postgres local is optional fallback. Logging and monitoring stack deferred to a later phase. | solution-architect |
 | P0-06 | Configure Neon projects/branches plan | BE | Dev/staging/prod connection env vars documented; pooled/direct URLs separated. | database-optimizer |
 | P0-07 | CI skeleton | Both | Lint/test/build jobs exist for Go services and Next.js app. | solution-architect |
 
@@ -175,6 +174,12 @@ Quality gate:
 - Contracts compile or validate.
 - `make dev` or equivalent starts local dependencies.
 - `.env.example` documents Neon pooled/direct variables without real secrets.
+
+Backend unit test gate:
+
+- Add unit tests for backend contract validation, config loading and shared envelope parsing before closing Phase 0.
+- `go test ./...` passes in CI for all backend packages created in this phase.
+- New backend packages target at least 80% statement coverage; any exception must be documented in the phase notes.
 
 ## 7. Phase 1: Next.js FE Shell And Design System
 
@@ -203,7 +208,7 @@ Quality gate:
 |---|---|---|---|---|
 | P2-01 | Create Go module/service layout | BE | Each service has `cmd/`, `internal/`, config, health endpoints. | golang-pro, golang-code-style |
 | P2-02 | API Gateway REST skeleton | BE | Routes forward to service clients or stubs; request IDs propagated. | api-design, golang-pro |
-| P2-03 | Shared config/logger/OTel package | BE | JSON logs, `X-Correlation-Id`, trace propagation implemented. | monitoring-expert, golang-pro |
+| P2-03 | Shared config/logger/OTel package | BE | JSON logs, `X-Correlation-Id`, trace/span IDs, metrics and trace propagation implemented. | monitoring-expert, golang-pro |
 | P2-04 | Shared Postgres package | BE | Supports pooled/direct DSNs, transaction helper, retry classification. | database-optimizer, golang-pro |
 | P2-05 | gRPC infrastructure for Payment Service | BE | Payment gRPC server stub and Booking gRPC client stub compile. | golang-pro, microservices-architect |
 | P2-06 | Event bus abstraction | BE | Producer/consumer interface with test fake and Redpanda/Kafka adapter skeleton. | microservices-architect |
@@ -214,6 +219,12 @@ Quality gate:
 - All services expose `/health/live` and `/health/ready`.
 - Gateway can route mock endpoints.
 - gRPC Booking-to-Payment smoke test passes locally.
+
+Backend unit test gate:
+
+- Add unit tests for gateway routing, middleware, config/logger helpers, transaction helper behavior and event bus fakes before closing Phase 2.
+- `go test ./...` passes with race-prone shared packages covered by table-driven tests.
+- Backend coverage must not drop below the Phase 0 baseline; new shared packages target at least 80% statement coverage.
 
 ## 9. Phase 3: Neon Data Layer And Migrations
 
@@ -238,6 +249,12 @@ Neon-specific quality gate:
 - No migration relies on pooled transaction-mode session behavior.
 - Booking reservation tests run against Neon dev branch and local fallback.
 
+Backend unit test gate:
+
+- Add unit tests for migration discovery, repository transaction helpers, idempotency helpers and outbox insert helpers before closing Phase 3.
+- Repository tests use test doubles where possible and Neon/local integration tests are tagged separately from fast unit tests.
+- `go test ./...` passes; changed backend packages target at least 80% statement coverage.
+
 ## 10. Phase 4: Discovery And Event Management
 
 **Goal**: Ship event catalog, search read model, media upload and discovery UI.
@@ -258,6 +275,12 @@ Quality gate:
 - Search p95 target is measurable.
 - Search stale state copy is visible in UI.
 - Event detail does not claim exact availability as final purchase truth.
+
+Backend unit test gate:
+
+- Add unit tests for event catalog services, media adapter contract, search query builder, cache invalidation and outbox-to-search projection before closing Phase 4.
+- API handlers must cover success, validation failure, auth failure and downstream error mapping.
+- `go test ./...` passes; new backend service packages target at least 80% statement coverage.
 
 ## 11. Phase 5: Seat Map, Availability, Reservation
 
@@ -280,6 +303,12 @@ Quality gate:
 - No double sell under concurrent reserve tests.
 - Neon lock wait metrics are visible.
 - Reservation writes do not call Payment/PSP inside lock transaction.
+
+Backend unit test gate:
+
+- Add unit tests for seat-map parsing, availability initialization, reservation state transitions, idempotency replay and expiry worker behavior before closing Phase 5.
+- Keep contention tests for reserve flow, but do not count them as a replacement for fast unit tests.
+- `go test ./...` passes; critical booking domain packages target at least 85% statement coverage.
 
 ## 12. Phase 6: Checkout, Payment gRPC, Ticketing, Notification
 
@@ -305,6 +334,12 @@ Quality gate:
 - Payment confirm is idempotent.
 - Notification provider outage does not affect confirmed booking.
 
+Backend unit test gate:
+
+- Add unit tests for gRPC handlers/clients, PSP adapter interface, webhook dedupe, booking confirm transaction, ticket issue service and notification retry policy before closing Phase 6.
+- Mock external PSP/email/SMS providers; unit tests must verify idempotency and timeout/error mapping.
+- `go test ./...` passes; critical checkout/payment/ticket packages target at least 85% statement coverage.
+
 ## 13. Phase 7: Organizer/Admin And Staff Scanner
 
 **Goal**: Complete operational workflows for organizers and event-day staff.
@@ -325,26 +360,51 @@ Quality gate:
 - Staff scanner works on mobile viewport.
 - Organizer cannot access another organizer's events.
 
+Backend unit test gate:
+
+- Add unit tests for organizer dashboard aggregations, check-in status transitions, RBAC enforcement and audit-log creation before closing Phase 7.
+- Authorization tests must include cross-organizer denial and staff-scope denial cases.
+- `go test ./...` passes; changed backend packages target at least 80% statement coverage.
+
 ## 14. Phase 8: Hardening, Load Test, Production Readiness
 
 **Goal**: Make the MVP reviewable and deployable.
 
 | ID | Task | FE/BE | Acceptance Criteria | Assigned Skills |
 |---|---|---|---|---|
-| P8-01 | End-to-end observability | Both | Traces cover search, reserve, checkout gRPC, webhook confirm, ticket issue, notification. | monitoring-expert |
-| P8-02 | Metrics dashboards | BE | Reservation conflict/timeout, lock wait, PSP latency, gRPC deadline, outbox lag, DLQ count. | monitoring-expert |
+| P8-01 | End-to-end observability | Both | Logs, metrics and traces cover search, reserve, checkout gRPC, webhook confirm, ticket issue, notification. | monitoring-expert |
+| P8-02 | Metrics dashboards | BE | Reservation conflict/timeout, lock wait, PSP latency, gRPC deadline, outbox lag, DLQ count. Grafana is default dashboard; Kibana is optional if Elastic is selected for logs. | monitoring-expert |
 | P8-03 | Load tests | Both | Search 2K QPS, reservation 100 TPS, gRPC payment intent, scanner 100 QPS tested. | golang-testing |
 | P8-04 | Neon production readiness drill | BE | Connection pool, direct migration, restore branch, backup verification and warm compute checklist complete. | database-optimizer |
 | P8-05 | Security hardening | Both | JWT/session expiry, RBAC, PII redaction, QR signing key rotation plan, PSP signature checks. | solution-architect |
 | P8-06 | Deployment manifests | Both | Next.js, API Gateway, services, workers, env vars and secrets documented. | solution-architect |
 | P8-07 | Runbooks | Both | Hot event, PSP incident, Elasticsearch lag, Redis outage, Neon connection saturation, event cancellation. | monitoring-expert |
 | P8-08 | Final docs update | Both | System design, technical report and this plan align. | planning-skill |
+| P8-09 | Logging pipeline | BE | Structured JSON logs flow from services/workers to collector/backend with redaction, service name, environment, correlation ID, trace ID and span ID. | monitoring-expert |
+| P8-10 | Distributed tracing pipeline | BE | OpenTelemetry spans cover REST, gRPC, DB transactions, Redis, Kafka/outbox and PSP calls with sampling configured per env. | monitoring-expert, golang-pro |
+| P8-11 | Alert rules | BE | Alerts exist for checkout error rate, reservation lock contention, payment webhook failures, outbox lag, Redis/Elasticsearch degradation and Neon connection saturation. | monitoring-expert |
+
+Observability implementation scope:
+
+- Logging: use structured JSON logs from every Go service, worker and API Gateway; include `service.name`, `env`, `correlation_id`, `trace_id`, `span_id`, `user_id_hash` when available, latency, route/method/status and sanitized business IDs such as `booking_external_id`.
+- Tracing: instrument OpenTelemetry for REST, gRPC Booking -> Payment, DB transactions, Redis cache calls, Kafka/outbox publish-consume, PSP adapter calls and notification provider calls.
+- Metrics: expose Prometheus-compatible `/metrics` from services and workers; use RED metrics for APIs/gRPC and business metrics for reservations, payments, tickets, notifications and outbox.
+- Dashboards: create service overview, checkout funnel, reservation correctness, payment/PSP, ticket/check-in, outbox/eventing, Neon/Postgres, Redis, Elasticsearch/OpenSearch and worker dashboards.
+- Alerts: define page-worthy alerts only for user-impacting symptoms and exhausted capacity; keep debug signals visible in dashboards without paging.
+- Default stack: OpenTelemetry Collector + Prometheus + Grafana + Loki + Tempo for MVP. Alternative stack: Elastic Agent/OTel Collector + Elasticsearch + Kibana if the team chooses Elastic as primary log/search observability platform.
 
 Quality gate:
 
 - MVP can run in staging with Neon staging branch.
 - Rollback/restore drill documented.
 - Load test results are attached or summarized before production pilot.
+- Observability stack shows correlated logs, traces and metrics for a complete reserve -> payment -> ticket issue flow.
+
+Backend unit test gate:
+
+- Add or update unit tests for hardening changes, security helpers, observability middleware and incident-safe fallback paths before closing Phase 8.
+- CI must publish backend coverage summary and fail if coverage drops from the agreed baseline without an approved exception.
+- `go test ./...` and race-enabled tests for critical packages pass before production pilot.
 
 ## 15. Implementation Milestones
 
@@ -368,6 +428,11 @@ Quality gate:
 - FE checkout/scan/payment routes are no-store and cannot be cached by Next.js.
 - Payment Service stores raw PSP webhook before processing.
 - Event consumers are idempotent and track processed event IDs.
+- Services emit structured logs with correlation ID and trace/span IDs; PII, tokens and raw payment secrets are redacted.
+- Critical REST/gRPC/worker paths expose metrics and OpenTelemetry traces.
+- Every backend phase must add or update unit tests for the backend code changed in that phase.
+- Backend CI must run `go test ./...` on every PR and publish coverage summary.
+- Critical booking/payment/ticket domain packages should target at least 85% statement coverage; other changed backend packages should target at least 80%.
 
 ## 17. Risk Mitigation
 

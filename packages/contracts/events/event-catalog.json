@@ -1,0 +1,48 @@
+{
+  "version": "0.1.0",
+  "envelope_schema": "schemas/event-envelope.schema.json",
+  "events": [
+    {
+      "event_type": "reservation.held",
+      "event_version": 1,
+      "owner": "booking",
+      "topic": "booking.reservations",
+      "payload_schema": "schemas/reservation-held.schema.json"
+    },
+    {
+      "event_type": "reservation.expired",
+      "event_version": 1,
+      "owner": "booking",
+      "topic": "booking.reservations",
+      "payload_schema": "schemas/reservation-expired.schema.json"
+    },
+    {
+      "event_type": "payment.captured",
+      "event_version": 1,
+      "owner": "payment",
+      "topic": "payment.events",
+      "payload_schema": "schemas/payment-captured.schema.json"
+    },
+    {
+      "event_type": "booking.confirmed",
+      "event_version": 1,
+      "owner": "booking",
+      "topic": "booking.events",
+      "payload_schema": "schemas/booking-confirmed.schema.json"
+    },
+    {
+      "event_type": "ticket.issued",
+      "event_version": 1,
+      "owner": "ticket",
+      "topic": "ticket.events",
+      "payload_schema": "schemas/ticket-issued.schema.json"
+    },
+    {
+      "event_type": "notification.requested",
+      "event_version": 1,
+      "owner": "notification",
+      "topic": "notification.events",
+      "payload_schema": "schemas/notification-requested.schema.json"
+    }
+  ]
+}

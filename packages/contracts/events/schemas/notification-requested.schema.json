@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pulse-seat.example.com/schemas/notification-requested.schema.json",
+  "title": "Notification Requested Payload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["notification_id", "channel", "template", "recipient_ref", "requested_at"],
+  "properties": {
+    "notification_id": { "type": "string" },
+    "booking_id": { "type": "string" },
+    "ticket_id": { "type": "string" },
+    "channel": { "enum": ["email", "sms"] },
+    "template": { "type": "string" },
+    "recipient_ref": { "type": "string" },
+    "requested_at": { "type": "string", "format": "date-time" }
+  }
+}

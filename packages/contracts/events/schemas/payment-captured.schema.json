@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pulse-seat.example.com/schemas/payment-captured.schema.json",
+  "title": "Payment Captured Payload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["payment_id", "booking_id", "reservation_id", "provider", "amount", "currency", "captured_at"],
+  "properties": {
+    "payment_id": { "type": "string" },
+    "booking_id": { "type": "string" },
+    "reservation_id": { "type": "string" },
+    "provider": { "enum": ["stripe", "adyen", "payos", "momo", "zalopay"] },
+    "provider_payment_ref": { "type": "string" },
+    "amount": { "type": "integer", "minimum": 0 },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "captured_at": { "type": "string", "format": "date-time" }
+  }
+}

@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package pulse.seat.v1;
+
+option go_package = "github.com/tienv1per/pulse-seat/packages/contracts/gen/pulse/seat/v1;seatv1";
+
+// PaymentIntentService is called synchronously by Booking Service during checkout.
+service PaymentIntentService {
+  rpc CreateIntent(CreatePaymentIntentRequest) returns (CreatePaymentIntentResponse);
+}
+
+message CreatePaymentIntentRequest {
+  string idempotency_key = 1;
+  string correlation_id = 2;
+  string booking_id = 3;
+  string reservation_id = 4;
+  string buyer_ref = 5;
+  Money amount = 6;
+  PaymentMethod payment_method = 7;
+  map<string, string> metadata = 8;
+}
+
+message CreatePaymentIntentResponse {
+  string payment_intent_id = 1;
+  string booking_id = 2;
+  string reservation_id = 3;
+  PaymentIntentStatus status = 4;
+  ClientAction client_action = 5;
+  string provider_ref = 6;
+}
+
+message Money {
+  int64 amount = 1;
+  string currency = 2;
+}
+
+message PaymentMethod {
+  PaymentProvider provider = 1;
+  string token = 2;
+}
+
+message ClientAction {
+  ClientActionType type = 1;
+  string redirect_url = 2;
+  string client_secret = 3;
+  string expires_at = 4;
+}
+
+enum PaymentProvider {
+  PAYMENT_PROVIDER_UNSPECIFIED = 0;
+  PAYMENT_PROVIDER_STRIPE = 1;
+  PAYMENT_PROVIDER_ADYEN = 2;
+  PAYMENT_PROVIDER_PAYOS = 3;
+  PAYMENT_PROVIDER_MOMO = 4;
+  PAYMENT_PROVIDER_ZALOPAY = 5;
+}
+
+enum PaymentIntentStatus {
+  PAYMENT_INTENT_STATUS_UNSPECIFIED = 0;
+  PAYMENT_INTENT_STATUS_REQUIRES_ACTION = 1;
+  PAYMENT_INTENT_STATUS_PROCESSING = 2;
+  PAYMENT_INTENT_STATUS_CAPTURED = 3;
+  PAYMENT_INTENT_STATUS_FAILED = 4;
+}
+
+enum ClientActionType {
+  CLIENT_ACTION_TYPE_UNSPECIFIED = 0;
+  CLIENT_ACTION_TYPE_NONE = 1;
+  CLIENT_ACTION_TYPE_REDIRECT = 2;
+  CLIENT_ACTION_TYPE_USE_CLIENT_SECRET = 3;
+}

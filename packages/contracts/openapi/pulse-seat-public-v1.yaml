@@ -1,0 +1,789 @@
+openapi: 3.1.0
+info:
+  title: Pulse Seat Public API
+  version: 0.1.0
+  description: Public REST contract for Pulse Seat MVP discovery, reservations, checkout, tickets and check-in.
+servers:
+  - url: https://api.pulse-seat.example.com
+    description: Production placeholder
+  - url: http://localhost:8080
+    description: Local API Gateway
+tags:
+  - name: Events
+  - name: Reservations
+  - name: Bookings
+  - name: Tickets
+  - name: CheckIns
+paths:
+  /v1/events/search:
+    get:
+      tags: [Events]
+      summary: Search public events
+      operationId: searchEvents
+      parameters:
+        - name: city
+          in: query
+          schema:
+            type: string
+          example: HCM
+        - name: date_from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: date_to
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: artist
+          in: query
+          schema:
+            type: string
+        - name: venue
+          in: query
+          schema:
+            type: string
+        - name: genre
+          in: query
+          schema:
+            type: string
+        - name: availability
+          in: query
+          schema:
+            $ref: "#/components/schemas/AvailabilityFilter"
+        - name: price_min
+          in: query
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+        - name: price_max
+          in: query
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Search results.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchEventsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+  /v1/events/{event_id}:
+    get:
+      tags: [Events]
+      summary: Get event detail
+      operationId: getEventDetail
+      parameters:
+        - $ref: "#/components/parameters/EventID"
+      responses:
+        "200":
+          description: Event detail.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventDetail"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /v1/performances/{performance_id}/seat-map:
+    get:
+      tags: [Events]
+      summary: Get seat map and near-realtime availability
+      operationId: getSeatMap
+      parameters:
+        - $ref: "#/components/parameters/PerformanceID"
+        - name: section_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Seat map and availability snapshot.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SeatMapResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /v1/reservations:
+    post:
+      tags: [Reservations]
+      summary: Hold selected tickets for checkout
+      operationId: createReservation
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+        - $ref: "#/components/parameters/CorrelationID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateReservationRequest"
+      responses:
+        "201":
+          description: Reservation held.
+          headers:
+            Location:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateReservationResponse"
+        "409":
+          description: Selected inventory is unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TicketConflictError"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+  /v1/bookings:
+    post:
+      tags: [Bookings]
+      summary: Create booking and payment intent for a held reservation
+      operationId: createBooking
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+        - $ref: "#/components/parameters/CorrelationID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBookingRequest"
+      responses:
+        "201":
+          description: Booking confirmed synchronously.
+          headers:
+            Location:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateBookingResponse"
+        "202":
+          description: Payment processing asynchronously.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateBookingResponse"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+  /v1/bookings/{booking_id}:
+    get:
+      tags: [Bookings]
+      summary: Get booking status
+      operationId: getBooking
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/BookingID"
+      responses:
+        "200":
+          description: Booking status.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /v1/tickets/{ticket_id}:
+    get:
+      tags: [Tickets]
+      summary: Get ticket wallet detail
+      operationId: getTicket
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/TicketID"
+      responses:
+        "200":
+          description: Ticket detail.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ticket"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /v1/tickets/{ticket_id}/void:
+    post:
+      tags: [Tickets]
+      summary: Void an issued ticket
+      operationId: voidTicket
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/TicketID"
+        - $ref: "#/components/parameters/IdempotencyKey"
+        - $ref: "#/components/parameters/CorrelationID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VoidTicketRequest"
+      responses:
+        "200":
+          description: Ticket voided.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ticket"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /v1/check-ins/scan:
+    post:
+      tags: [CheckIns]
+      summary: Scan a QR ticket at event entry
+      operationId: scanTicket
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CorrelationID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScanTicketRequest"
+      responses:
+        "200":
+          description: Scan accepted or rejected.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScanTicketResponse"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        type: string
+        minLength: 8
+        maxLength: 128
+    CorrelationID:
+      name: X-Correlation-Id
+      in: header
+      required: false
+      schema:
+        type: string
+        maxLength: 128
+    EventID:
+      name: event_id
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: "^evt_[A-Za-z0-9_-]+$"
+    PerformanceID:
+      name: performance_id
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: "^perf_[A-Za-z0-9_-]+$"
+    BookingID:
+      name: booking_id
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: "^bk_[A-Za-z0-9_-]+$"
+    TicketID:
+      name: ticket_id
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: "^tkt_[A-Za-z0-9_-]+$"
+  responses:
+    BadRequest:
+      description: Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/APIError"
+    ValidationError:
+      description: Semantic validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/APIError"
+    NotFound:
+      description: Resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/APIError"
+    Conflict:
+      description: Resource state conflict.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/APIError"
+    TooManyRequests:
+      description: Rate limit exceeded.
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/APIError"
+  schemas:
+    AvailabilityFilter:
+      type: string
+      enum: [available, few_left, sold_out]
+    AvailabilityStatus:
+      type: string
+      enum: [AVAILABLE, FEW_LEFT, SOLD_OUT, UNAVAILABLE]
+    Currency:
+      type: string
+      pattern: "^[A-Z]{3}$"
+      example: VND
+    MoneyAmount:
+      type: integer
+      format: int64
+      minimum: 0
+      description: Amount in the smallest currency unit.
+    APIError:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              type: array
+              items:
+                type: object
+                required: [field, message]
+                properties:
+                  field:
+                    type: string
+                  message:
+                    type: string
+                  code:
+                    type: string
+    SearchEventsResponse:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/SearchEvent"
+        next_cursor:
+          type: string
+          nullable: true
+        total_count:
+          type: integer
+          minimum: 0
+    SearchEvent:
+      type: object
+      required: [event_id, slug, title, artists, venue, starts_at, min_price, currency, availability_status]
+      properties:
+        event_id:
+          type: string
+        slug:
+          type: string
+        title:
+          type: string
+        artists:
+          type: array
+          items:
+            type: string
+        venue:
+          $ref: "#/components/schemas/VenueSummary"
+        starts_at:
+          type: string
+          format: date-time
+        min_price:
+          $ref: "#/components/schemas/MoneyAmount"
+        currency:
+          $ref: "#/components/schemas/Currency"
+        availability_status:
+          $ref: "#/components/schemas/AvailabilityStatus"
+        thumbnail_url:
+          type: string
+          format: uri
+    EventDetail:
+      type: object
+      required: [event_id, title, artists, performances]
+      properties:
+        event_id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        artists:
+          type: array
+          items:
+            type: string
+        performances:
+          type: array
+          items:
+            $ref: "#/components/schemas/Performance"
+        media:
+          type: array
+          items:
+            $ref: "#/components/schemas/MediaAsset"
+        policies:
+          type: object
+          additionalProperties:
+            type: string
+    Performance:
+      type: object
+      required: [performance_id, starts_at, venue, tiers]
+      properties:
+        performance_id:
+          type: string
+        starts_at:
+          type: string
+          format: date-time
+        venue:
+          $ref: "#/components/schemas/VenueSummary"
+        tiers:
+          type: array
+          items:
+            $ref: "#/components/schemas/TicketTier"
+    VenueSummary:
+      type: object
+      required: [name, city]
+      properties:
+        venue_id:
+          type: string
+        name:
+          type: string
+        city:
+          type: string
+    TicketTier:
+      type: object
+      required: [tier_id, name, price, currency, availability_status]
+      properties:
+        tier_id:
+          type: string
+        name:
+          type: string
+        price:
+          $ref: "#/components/schemas/MoneyAmount"
+        currency:
+          $ref: "#/components/schemas/Currency"
+        availability_status:
+          $ref: "#/components/schemas/AvailabilityStatus"
+    MediaAsset:
+      type: object
+      required: [type, url]
+      properties:
+        type:
+          type: string
+          enum: [image, video]
+        url:
+          type: string
+          format: uri
+    SeatMapResponse:
+      type: object
+      required: [performance_id, seat_map_version, sections, seats]
+      properties:
+        performance_id:
+          type: string
+        seat_map_version:
+          type: integer
+          minimum: 1
+        sections:
+          type: array
+          items:
+            $ref: "#/components/schemas/SeatSection"
+        seats:
+          type: array
+          items:
+            $ref: "#/components/schemas/Seat"
+    SeatSection:
+      type: object
+      required: [section_id, name, seating_type, availability_summary]
+      properties:
+        section_id:
+          type: string
+        name:
+          type: string
+        seating_type:
+          type: string
+          enum: [RESERVED, GENERAL_ADMISSION]
+        availability_summary:
+          type: object
+          required: [available, few_left]
+          properties:
+            available:
+              type: integer
+              minimum: 0
+            few_left:
+              type: boolean
+    Seat:
+      type: object
+      required: [seat_id, label, tier_id, status, x, y]
+      properties:
+        seat_id:
+          type: string
+        label:
+          type: string
+        row:
+          type: string
+        number:
+          type: string
+        tier_id:
+          type: string
+        status:
+          type: string
+          enum: [AVAILABLE, HELD, SOLD, BLOCKED]
+        x:
+          type: number
+        y:
+          type: number
+    CreateReservationRequest:
+      type: object
+      required: [performance_id, items]
+      properties:
+        performance_id:
+          type: string
+        items:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/ReservationItemRequest"
+        access_code:
+          type: string
+    ReservationItemRequest:
+      type: object
+      required: [type, tier_id]
+      properties:
+        type:
+          type: string
+          enum: [RESERVED_SEAT, GENERAL_ADMISSION]
+        seat_id:
+          type: string
+        tier_id:
+          type: string
+        section_id:
+          type: string
+        quantity:
+          type: integer
+          minimum: 1
+          default: 1
+    CreateReservationResponse:
+      type: object
+      required: [reservation_id, status, held_until, total_price, currency, checkout_url]
+      properties:
+        reservation_id:
+          type: string
+        status:
+          type: string
+          enum: [HELD]
+        held_until:
+          type: string
+          format: date-time
+        total_price:
+          $ref: "#/components/schemas/MoneyAmount"
+        currency:
+          $ref: "#/components/schemas/Currency"
+        checkout_url:
+          type: string
+    TicketConflictError:
+      allOf:
+        - $ref: "#/components/schemas/APIError"
+        - type: object
+          properties:
+            error:
+              type: object
+              properties:
+                alternatives:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      seat_id:
+                        type: string
+                      tier_id:
+                        type: string
+    CreateBookingRequest:
+      type: object
+      required: [reservation_id, buyer, payment_method]
+      properties:
+        reservation_id:
+          type: string
+        buyer:
+          $ref: "#/components/schemas/Buyer"
+        attendees:
+          type: array
+          items:
+            $ref: "#/components/schemas/Attendee"
+        payment_method:
+          $ref: "#/components/schemas/PaymentMethod"
+    Buyer:
+      type: object
+      required: [name, email]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+    Attendee:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+    PaymentMethod:
+      type: object
+      required: [provider, token]
+      properties:
+        provider:
+          type: string
+          enum: [stripe, adyen, payos, momo, zalopay]
+        token:
+          type: string
+    CreateBookingResponse:
+      type: object
+      required: [booking_id, status, payment_status]
+      properties:
+        booking_id:
+          type: string
+        status:
+          $ref: "#/components/schemas/BookingStatus"
+        payment_status:
+          type: string
+          enum: [PROCESSING, CAPTURED, FAILED]
+        ticket_ids:
+          type: array
+          items:
+            type: string
+        confirmation_url:
+          type: string
+        poll_url:
+          type: string
+    Booking:
+      type: object
+      required: [booking_id, reservation_id, status, payment_status]
+      properties:
+        booking_id:
+          type: string
+        reservation_id:
+          type: string
+        status:
+          $ref: "#/components/schemas/BookingStatus"
+        payment_status:
+          type: string
+        ticket_ids:
+          type: array
+          items:
+            type: string
+    BookingStatus:
+      type: string
+      enum: [PENDING_PAYMENT, PAYMENT_PENDING, CONFIRMED, EXPIRED, REFUND_PENDING, REFUNDED]
+    Ticket:
+      type: object
+      required: [ticket_id, booking_id, status, attendee_name, qr_token]
+      properties:
+        ticket_id:
+          type: string
+        booking_id:
+          type: string
+        event_id:
+          type: string
+        performance_id:
+          type: string
+        status:
+          type: string
+          enum: [ACTIVE, USED, VOID, REFUNDED]
+        seat_label:
+          type: string
+        attendee_name:
+          type: string
+        qr_token:
+          type: string
+    VoidTicketRequest:
+      type: object
+      required: [reason]
+      properties:
+        reason:
+          type: string
+          enum: [CANCELLATION, FRAUD, REFUND, OPERATOR_ACTION]
+        note:
+          type: string
+    ScanTicketRequest:
+      type: object
+      required: [qr_token, device_id, gate]
+      properties:
+        qr_token:
+          type: string
+        device_id:
+          type: string
+        gate:
+          type: string
+    ScanTicketResponse:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [ACCEPTED, REJECTED]
+        reason:
+          type: string
+          enum: [ALREADY_USED, VOID, REFUNDED, INVALID_TOKEN, EVENT_MISMATCH]
+        ticket_id:
+          type: string
+        seat_label:
+          type: string
+        attendee_name:
+          type: string
+        first_scanned_at:
+          type: string
+          format: date-time
+        first_device:
+          type: string

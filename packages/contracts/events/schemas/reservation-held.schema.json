@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pulse-seat.example.com/schemas/reservation-held.schema.json",
+  "title": "Reservation Held Payload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["reservation_id", "performance_id", "status", "held_until", "items", "total_amount", "currency"],
+  "properties": {
+    "reservation_id": { "type": "string" },
+    "performance_id": { "type": "string" },
+    "status": { "const": "HELD" },
+    "held_until": { "type": "string", "format": "date-time" },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/reservation_item" }
+    },
+    "total_amount": { "type": "integer", "minimum": 0 },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" }
+  },
+  "$defs": {
+    "reservation_item": {
+      "type": "object",
+      "required": ["type", "tier_id", "quantity"],
+      "properties": {
+        "type": { "enum": ["RESERVED_SEAT", "GENERAL_ADMISSION"] },
+        "seat_id": { "type": "string" },
+        "tier_id": { "type": "string" },
+        "section_id": { "type": "string" },
+        "quantity": { "type": "integer", "minimum": 1 }
+      }
+    }
+  }
+}

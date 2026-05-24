@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pulse-seat.example.com/schemas/event-envelope.schema.json",
+  "title": "Pulse Seat Event Envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "event_id",
+    "event_type",
+    "event_version",
+    "source",
+    "aggregate_type",
+    "aggregate_id",
+    "occurred_at",
+    "correlation_id",
+    "payload"
+  ],
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "minLength": 8
+    },
+    "event_type": {
+      "type": "string",
+      "pattern": "^[a-z]+\\.[a-z_]+$"
+    },
+    "event_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "source": {
+      "type": "string",
+      "enum": ["booking", "payment", "ticket", "notification", "reservation-expiry", "cdc-sync"]
+    },
+    "aggregate_type": {
+      "type": "string"
+    },
+    "aggregate_id": {
+      "type": "string"
+    },
+    "occurred_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "correlation_id": {
+      "type": "string"
+    },
+    "idempotency_key": {
+      "type": "string"
+    },
+    "payload": {
+      "type": "object"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  }
+}
